@@ -2101,6 +2101,324 @@
           }
         }
       }
+    },
+    "/v1/deployments": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "put": {
+        "summary": "Deploy releases at circle",
+        "description": "Makes the deployment of the requested components at circle, if the circle already has an active release deployed, it will be overwritten",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The deployment request was made successfully and there isn't any active release deployed yet"
+          },
+          "204": {
+            "description": "The deployment request was made successfully and the the circle already has  an active deployment and it was overwrite"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle or some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Increment release at circle",
+        "description": "Increments the circle with new components, if the circle already has a version of a requested component, this one will be overwritten, and the others added",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deploymentSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle or some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployments/undeploy": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Undeploy all releases at circle",
+        "description": "Makes the undeploy of all components at circle",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/fullUnDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The un-deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist, or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Undeploy selected components",
+        "description": "Makes the undeploy of selected components",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/partialUnDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The un-deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist, or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployments/rollback": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Execute rollback at circle",
+        "description": "Executes a rollback at circle, if no release is specified, it will make the rollback to the the release immediate before to the actual one",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/releaseRollbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The rollback request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If the circle does not exist or there aren't releases deployed"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployments/open-sea": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Increment release  at open sea",
+        "description": "Increments the open sea with new components, if already has a version of a requested component, this one will be overwritten, and the others added",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/openSeaDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If open sea or the some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deployments/undeploy/open-sea": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Decrement release at open sea",
+        "description": "Decrements the open sea components, removing the requested components, if and only if, at least one component is held",
+        "tags": [
+          "Deployment V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/openSeaUnDeploymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The un-deployment request was made successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "If open sea or the some component does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2887,6 +3205,119 @@
           "groupName": {
             "type": "string",
             "example": "Charles dev group"
+          }
+        }
+      },
+      "deploymentRequest": {
+        "description": "The object used for making a deployment request",
+        "properties": {
+          "circleId": {
+            "description": "The circle to be deployed at",
+            "type": "string",
+            "format": "uuid",
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8",
+            "required": true
+          },
+          "components": {
+            "type": "array",
+            "required": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "frontend",
+                  "required": true
+                },
+                "version": {
+                  "type": "string",
+                  "example": "1.5.4-beta",
+                  "required": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "fullUnDeploymentRequest": {
+        "description": "The request object for full un-deployment at circle",
+        "properties": {
+          "circleId": {
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          }
+        }
+      },
+      "partialUnDeploymentRequest": {
+        "description": "The request object for partial un-deployment",
+        "properties": {
+          "circleId": {
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "frontend"
+            },
+            "required": true
+          }
+        }
+      },
+      "openSeaDeploymentRequest": {
+        "description": "Request object used for requesting the deployment of components at open sea",
+        "items": {
+          "type": "object",
+          "required": true,
+          "properties": {
+            "componentName": {
+              "type": "string",
+              "format": "uuid",
+              "required": true,
+              "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+            },
+            "componentVersion": {
+              "type": "string",
+              "required": true,
+              "example": "1.5.4-alpha"
+            }
+          }
+        }
+      },
+      "openSeaUnDeploymentRequest": {
+        "description": "Request object used for remove components from open sea",
+        "items": {
+          "type": "object",
+          "required": true,
+          "properties": {
+            "componentName": {
+              "type": "string",
+              "format": "uuid",
+              "required": true,
+              "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+            }
+          }
+        }
+      },
+      "releaseRollbackRequest": {
+        "description": "The request object used for requesting a rollback",
+        "properties": {
+          "circleId": {
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          },
+          "releaseId": {
+            "type": "string",
+            "format": "uuid",
+            "required": false,
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
           }
         }
       }
