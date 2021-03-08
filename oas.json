@@ -91,51 +91,7 @@
       },
       "post": {
         "summary": "Create workspace",
-        "description": "Create a new Workspace",
-        "tags": [
-          "Workspace V1"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/workspaceRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "The workspace that was created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/workspaceFullResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Token is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "summary": "Create workspace",
-        "description": "Create a new Workspace (this is an idea, this method should be a POST, and the only required config is the name, but all the other if present are saved as well)",
+        "description": "Create a new Workspace, the only required property is the name, the other one are optional for creation, but for the workspace to works needs the other configuration",
         "tags": [
           "Workspace V1"
         ],
@@ -1710,56 +1666,6 @@
             }
           }
         }
-      },
-      "patch": {
-        "summary": "Set components",
-        "description": "Create / update the components in the workspace",
-        "tags": [
-          "Component V1"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/componentsSchema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Components information",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/pocComponentsSchema"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Token / workspace-id header is not sent or is invalid"
-          },
-          "403": {
-            "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "The workspace does not exists"
-          },
-          "5XX": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorResponse"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/v1/user-groups": {
@@ -2062,12 +1968,7 @@
           }
         },
         {
-          "description": "The memberId",
-          "name": "memberId",
-          "in": "path",
-          "schema": {
-            "type": "string"
-          }
+          "$ref": "#/components/parameters/pathMemberId"
         }
       ],
       "delete": {
@@ -2088,6 +1989,86 @@
           },
           "404": {
             "description": "The user group does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/{memberId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathMemberId"
+        }
+      ],
+      "get": {
+        "summary": "List all groups of a member",
+        "description": "Lists all the groups that a member is part of",
+        "tags": [
+          "Users V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "All groups that the member is part of",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/userGroupsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/users/{memberId}/dissassociate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathMemberId"
+        }
+      ],
+      "delete": {
+        "summary": "Disassociate member from all groups",
+        "description": "Disassociate a member from all groups that he is part of",
+        "tags": [
+          "Users V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "If the member was disassociated from all groups successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
           },
           "5XX": {
             "description": "Unexpected error",
@@ -3080,30 +3061,20 @@
       "componentsSchema": {
         "description": "The component information",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          },
           "helm": {
             "description": "The git url where the helm template of components is",
             "type": "string",
+            "required": true,
             "example": "github.com/zupit/helm"
           },
-          "components": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "example": "front-end"
-            }
-          }
-        }
-      },
-      "pocComponentsSchema": {
-        "description": "The component information",
-        "properties": {
-          "helm": {
-            "description": "The git url where the helm template of components is",
+          "name": {
             "type": "string",
-            "example": "github.com/zupit/helm"
-          },
-          "component": {
-            "type": "string",
+            "required": true,
             "example": "front-end"
           }
         }
@@ -3379,6 +3350,14 @@
         "schema": {
           "type": "string",
           "example": "charlinho"
+        }
+      },
+      "pathMemberId": {
+        "description": "The memberId",
+        "name": "memberId",
+        "in": "path",
+        "schema": {
+          "type": "string"
         }
       }
     }
