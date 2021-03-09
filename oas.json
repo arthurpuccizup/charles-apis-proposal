@@ -765,8 +765,8 @@
         }
       ],
       "post": {
-        "summary": "Create new rollout action configuration",
-        "description": "Creates a new rollout action configuration for the workspace",
+        "summary": "Create new action configuration",
+        "description": "Creates a new action configuration for the workspace",
         "tags": [
           "Workspace V1"
         ],
@@ -916,7 +916,7 @@
         }
       ],
       "delete": {
-        "summary": "Delete rollout action configuration",
+        "summary": "Delete action configuration",
         "description": "Deletes the action configuration from the workspace",
         "tags": [
           "Workspace V1"
@@ -1065,6 +1065,44 @@
           },
           "404": {
             "description": "The workspace or the group does not exist"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/routing": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "get": {
+        "summary": "Workspace routing",
+        "description": "The present routing of the workspace, basically return the virtual service and the destination rules",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The routing information"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exist"
           },
           "5XX": {
             "description": "Unexpected error",
@@ -1431,6 +1469,57 @@
         }
       }
     },
+    "/v1/circles/{circleId}/status": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "get": {
+        "summary": "Circle status",
+        "description": "Show the status of the cluster and applications for each component",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/circleComponentStatusResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The circle does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/circles/{circleId}/segmentation": {
       "parameters": [
         {
@@ -1531,6 +1620,60 @@
         }
       }
     },
+    "/v1/circles/identify": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Identify",
+        "description": "Call the circle matcher of the workspace with the passed identify payload to verify in which circles the possible user belongs",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/identifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The circles which the user may be part of",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/identifyResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/circles/open-sea": {
       "parameters": [
         {
@@ -1594,7 +1737,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/componentsSchema"
+                  "$ref": "#/components/schemas/componentsResponse"
                 }
               }
             }
@@ -1620,9 +1763,9 @@
           }
         }
       },
-      "put": {
-        "summary": "Set components",
-        "description": "Create / update the components in the workspace",
+      "post": {
+        "summary": "Create components",
+        "description": "Create the components in the workspace",
         "tags": [
           "Component V1"
         ],
@@ -1630,7 +1773,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/componentsSchema"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/componentRequest"
+                }
               }
             }
           }
@@ -1641,7 +1787,100 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/componentsSchema"
+                  "$ref": "#/components/schemas/componentsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/components/{componentId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "in": "path",
+          "name": "componentId",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete components",
+        "description": "Delete a component from workspace",
+        "tags": [
+          "Component V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "When the component was removed successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace or the component does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update component",
+        "description": "Updates the component",
+        "tags": [
+          "Component V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/componentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Components information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/componentsResponse"
                 }
               }
             }
@@ -1822,9 +2061,9 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "summary": "Update user group",
-        "description": "Updates the user group basic information",
+        "description": "Updates the user group name",
         "tags": [
           "UserGroup V1"
         ],
@@ -2354,39 +2593,60 @@
         }
       }
     },
-    "/v1/deployments/undeploy/open-sea": {
+    "/v1/histories/circles": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
         }
       ],
-      "patch": {
-        "summary": "Decrement release at open sea",
-        "description": "Decrements the open sea components, removing the requested components, if and only if, at least one component is held",
+      "get": {
+        "summary": "Circle history",
+        "description": "The circle history, shows every change to circles caused by an API call",
         "tags": [
-          "Deployment V1"
+          "History V1"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/openSeaUnDeploymentRequest"
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ids",
+            "description": "The circles id",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
+          },
+          {
+            "in": "query",
+            "name": "author",
+            "description": "The username of who made the change",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "description": "The when the changes were made ",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           }
-        },
+        ],
         "responses": {
-          "204": {
-            "description": "The un-deployment request was made successfully"
+          "200": {
+            "description": "The history objects"
           },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
           },
           "403": {
             "description": "Client doesn't have permissions to call the API"
-          },
-          "404": {
-            "description": "If open sea or the some component does not exist"
           },
           "5XX": {
             "description": "Unexpected error",
@@ -3019,6 +3279,26 @@
           }
         }
       },
+      "circleComponentStatusResponse": {
+        "description": "The component status",
+        "properties": {
+          "component": {
+            "type": "string",
+            "description": "The name of the component",
+            "example": "front-end"
+          },
+          "status": {
+            "type": "string",
+            "description": "The present status of the component",
+            "example": "RUNNING"
+          },
+          "pod": {
+            "description": "The pod name",
+            "type": "string",
+            "example": "front-end-abc-zhg4"
+          }
+        }
+      },
       "deploymentSchema": {
         "description": "The deployment object",
         "properties": {
@@ -3058,7 +3338,23 @@
           }
         }
       },
-      "componentsSchema": {
+      "componentRequest": {
+        "description": "The component information",
+        "properties": {
+          "helm": {
+            "description": "The git url where the helm template of components is",
+            "type": "string",
+            "required": true,
+            "example": "github.com/zupit/helm"
+          },
+          "name": {
+            "type": "string",
+            "required": true,
+            "example": "front-end"
+          }
+        }
+      },
+      "componentsResponse": {
         "description": "The component information",
         "properties": {
           "id": {
@@ -3289,6 +3585,28 @@
             "format": "uuid",
             "required": false,
             "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          }
+        }
+      },
+      "identifyRequest": {
+        "description": "The request object used for calling the identify, it's a simple key value map",
+        "type": "object",
+        "example": {
+          "username": "charles@zup.com.br",
+          "location": "BR"
+        }
+      },
+      "identifyResponse": {
+        "description": "The identify response object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "de8fa547-ae35-4566-8a9d-a4731165bbaf"
+          },
+          "name": {
+            "type": "string",
+            "example": "Circle Abc"
           }
         }
       }
