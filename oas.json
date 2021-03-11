@@ -2434,7 +2434,7 @@
         }
       }
     },
-    "/v1/users/{memberId}": {
+    "/v1/users/{memberId}/user-groups": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathMemberId"
@@ -2477,14 +2477,7 @@
             }
           }
         }
-      }
-    },
-    "/v1/users/{memberId}/dissassociate": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/pathMemberId"
-        }
-      ],
+      },
       "delete": {
         "summary": "Disassociate member from all groups",
         "description": "Disassociate a member from all groups that he is part of",
