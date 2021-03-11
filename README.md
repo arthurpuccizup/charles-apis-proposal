@@ -42,11 +42,11 @@
 
 - Deploy components using the name or the id?
 
-- Is possible to make the rollback? (One way of doing that is using event sourcing schema)
-
 - Component removal from open sea?
 
 - Create a user id for each combination userGroup - user, or only use the username?
+
+- Where to pass workspaceId? In a header? Path parameter composition?
 
 **Some notes**
 
@@ -54,8 +54,8 @@
   individually for each resource, and they're basically a get with various query parameters that allow to filter the
   events
 
-- Tg=here is also an idea to list the cluster events for that workspace, assuming, of course, that is one workspace to
-  one namespace
+- There is also an idea to list the cluster events for that workspace, assuming, of course, that is one workspace to one
+  namespace
 
 - Not adding the system token functionality yet, since it's not done
 

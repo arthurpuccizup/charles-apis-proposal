@@ -444,7 +444,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/butler": {
+    "/v1/workspaces/{workspaceId}/configurations/deployment": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -522,7 +522,7 @@
         }
       }
     },
-    "/v1/workspaces/{workspaceId}/configurations/butler/validate": {
+    "/v1/workspaces/{workspaceId}/configurations/deployment/validate": {
       "parameters": [
         {
           "$ref": "#/components/parameters/pathWorkspaceId"
@@ -2322,13 +2322,16 @@
         }
       }
     },
-    "/v1/deployments": {
+    "/v1/circles/{circleId}/deployments": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
         }
       ],
-      "put": {
+      "post": {
         "summary": "Deploy releases at circle",
         "description": "Makes the deployment of the requested components at circle, if the circle already has an active release deployed, it will be overwritten",
         "tags": [
@@ -2338,7 +2341,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/deploymentSchema"
+                "$ref": "#/components/schemas/deploymentRequest"
               }
             }
           }
@@ -2370,8 +2373,18 @@
             }
           }
         }
-      },
-      "patch": {
+      }
+    },
+    "/v1/circles/{circleId}/deployments/increment": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
         "summary": "Increment release at circle",
         "description": "Increments the circle with new components, if the circle already has a version of a requested component, this one will be overwritten, and the others added",
         "tags": [
@@ -2381,7 +2394,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/deploymentSchema"
+                "$ref": "#/components/schemas/deploymentRequest"
               }
             }
           }
@@ -2412,10 +2425,13 @@
         }
       }
     },
-    "/v1/deployments/undeploy": {
+    "/v1/circles/{circleId}/deployments/undeploy": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
         }
       ],
       "post": {
@@ -2424,15 +2440,6 @@
         "tags": [
           "Deployment V1"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/fullUnDeploymentRequest"
-              }
-            }
-          }
-        },
         "responses": {
           "204": {
             "description": "The un-deployment request was made successfully"
@@ -2457,8 +2464,18 @@
             }
           }
         }
-      },
-      "patch": {
+      }
+    },
+    "/v1/circles/{circleId}/deployments/undeploy/decrement": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
         "summary": "Undeploy selected components",
         "description": "Makes the undeploy of selected components",
         "tags": [
@@ -2499,10 +2516,13 @@
         }
       }
     },
-    "/v1/deployments/rollback": {
+    "/v1/circles/{circleId}deployments/rollback": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
         }
       ],
       "post": {
@@ -2546,13 +2566,16 @@
         }
       }
     },
-    "/v1/deployments/open-sea": {
+    "/v1/circles/{circleId}/deployments/open-sea": {
       "parameters": [
         {
           "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
         }
       ],
-      "patch": {
+      "post": {
         "summary": "Increment release  at open sea",
         "description": "Increments the open sea with new components, if already has a version of a requested component, this one will be overwritten, and the others added",
         "tags": [
@@ -3275,7 +3298,7 @@
             "description": "If teh circle is active, the circle is active if and only if release is deployed on it"
           },
           "deployment": {
-            "$ref": "#/components/schemas/deploymentSchema"
+            "$ref": "#/components/schemas/deploymentResponse"
           }
         }
       },
@@ -3299,7 +3322,7 @@
           }
         }
       },
-      "deploymentSchema": {
+      "deploymentResponse": {
         "description": "The deployment object",
         "properties": {
           "id": {
@@ -3310,12 +3333,12 @@
           "components": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/deployedComponentSchema"
+              "$ref": "#/components/schemas/basicComponentDeploymentSchema"
             }
           }
         }
       },
-      "deployedComponentSchema": {
+      "basicComponentDeploymentSchema": {
         "description": "The component object",
         "properties": {
           "name": {
@@ -3334,7 +3357,7 @@
         "description": "The open sea information",
         "properties": {
           "releases": {
-            "$ref": "#/components/schemas/deployedComponentSchema"
+            "$ref": "#/components/schemas/basicComponentDeploymentSchema"
           }
         }
       },
@@ -3478,54 +3501,18 @@
       "deploymentRequest": {
         "description": "The object used for making a deployment request",
         "properties": {
-          "circleId": {
-            "description": "The circle to be deployed at",
-            "type": "string",
-            "format": "uuid",
-            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8",
-            "required": true
-          },
           "components": {
             "type": "array",
             "required": true,
             "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "example": "frontend",
-                  "required": true
-                },
-                "version": {
-                  "type": "string",
-                  "example": "1.5.4-beta",
-                  "required": true
-                }
-              }
+              "$ref": "#/components/schemas/basicComponentDeploymentSchema"
             }
-          }
-        }
-      },
-      "fullUnDeploymentRequest": {
-        "description": "The request object for full un-deployment at circle",
-        "properties": {
-          "circleId": {
-            "type": "string",
-            "format": "uuid",
-            "required": true,
-            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
           }
         }
       },
       "partialUnDeploymentRequest": {
         "description": "The request object for partial un-deployment",
         "properties": {
-          "circleId": {
-            "type": "string",
-            "format": "uuid",
-            "required": true,
-            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
-          },
           "components": {
             "type": "array",
             "items": {
@@ -3538,35 +3525,12 @@
       },
       "openSeaDeploymentRequest": {
         "description": "Request object used for requesting the deployment of components at open sea",
-        "items": {
-          "type": "object",
-          "required": true,
-          "properties": {
-            "componentName": {
-              "type": "string",
-              "format": "uuid",
-              "required": true,
-              "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
-            },
-            "componentVersion": {
-              "type": "string",
-              "required": true,
-              "example": "1.5.4-alpha"
-            }
-          }
-        }
-      },
-      "openSeaUnDeploymentRequest": {
-        "description": "Request object used for remove components from open sea",
-        "items": {
-          "type": "object",
-          "required": true,
-          "properties": {
-            "componentName": {
-              "type": "string",
-              "format": "uuid",
-              "required": true,
-              "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+        "properties": {
+          "components": {
+            "type": "array",
+            "required": true,
+            "items": {
+              "$ref": "#/components/schemas/basicComponentDeploymentSchema"
             }
           }
         }
@@ -3574,13 +3538,7 @@
       "releaseRollbackRequest": {
         "description": "The request object used for requesting a rollback",
         "properties": {
-          "circleId": {
-            "type": "string",
-            "format": "uuid",
-            "required": true,
-            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
-          },
-          "releaseId": {
+          "deploymentId": {
             "type": "string",
             "format": "uuid",
             "required": false,
