@@ -10,7 +10,7 @@
 - Don't control users, only use a username, and all the user control stays at the IDM, and when creating a user group,
   only requires a username, and remove the user entity management from our domain
 
-- No more registry or git configuration, and CD configuration was changed to butler configuration
+- No more registry, and CD configuration was changed to butler configuration
 
 - No more hypothesis board
 
@@ -19,6 +19,8 @@
 
 - Adding resource to show the currents virtual service and destination rules for each component registered at the
   workspace
+
+- Component bulking save
 
 **Some business rules:**
 
@@ -38,11 +40,14 @@
 - Should make names of the resources unique keys for each workspace, in addition the workspace name should be unique as
   well
 
+- All configuration that are chained to git, will use the git configuration at workspace
+
 **Some questions**
 
 - Deploy components using the name or the id?
 
-- Component removal from open sea?
+- Component removal from open sea? If yes, when removing the component from workspace is needed to remove from every
+  circle, including open sea
 
 - Create a user id for each combination userGroup - user, or only use the username?
 

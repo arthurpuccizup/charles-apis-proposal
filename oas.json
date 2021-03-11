@@ -105,11 +105,14 @@
                   }
                 ],
                 "properties": {
-                  "butlerConfig": {
-                    "$ref": "#/components/schemas/butlerConfigRequest"
+                  "deployConfig": {
+                    "$ref": "#/components/schemas/deploymentConfigSchema"
                   },
                   "circleMatcher": {
-                    "$ref": "#/components/schemas/circleMatcherRequest"
+                    "$ref": "#/components/schemas/circleMatcherSchema"
+                  },
+                  "gitconfig": {
+                    "$ref": "#/components/schemas/gitConfigSchema"
                   },
                   "datasources": {
                     "type": "array",
@@ -335,7 +338,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/circleMatcherRequest"
+                "$ref": "#/components/schemas/circleMatcherSchema"
               }
             }
           }
@@ -413,7 +416,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/circleMatcherRequest"
+                "$ref": "#/components/schemas/circleMatcherSchema"
               }
             }
           }
@@ -451,8 +454,8 @@
         }
       ],
       "patch": {
-        "summary": "Set Butler configuration",
-        "description": "Save the butler URl for that workspace, if an URl already exists, it's value is updated",
+        "summary": "Set deployment configuration",
+        "description": "Save the deployment configuration for that workspace, if a configuration already exists, it's value is updated",
         "tags": [
           "Workspace V1"
         ],
@@ -460,14 +463,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/butlerConfigRequest"
+                "$ref": "#/components/schemas/deploymentConfigSchema"
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "If the butler URL was updated successfully"
+            "description": "If the deployment configuration was updated successfully"
           },
           "401": {
             "description": "Token is not sent or is invalid"
@@ -491,14 +494,14 @@
         }
       },
       "delete": {
-        "summary": "Deletes a butler configuration",
-        "description": "Deletes the butler configuration from the specified workspace",
+        "summary": "Deletes a deployment configuration",
+        "description": "Deletes the deployment configuration from the specified workspace",
         "tags": [
           "Workspace V1"
         ],
         "responses": {
           "204": {
-            "description": "When the butler configuration was deleted successfully"
+            "description": "When the deployment configuration was deleted successfully"
           },
           "401": {
             "description": "Token is not sent or is invalid"
@@ -529,8 +532,8 @@
         }
       ],
       "post": {
-        "summary": "Validate butler ",
-        "description": "Validate the butler URl, and checks if it's reachable, this is recommended before it's creation",
+        "summary": "Validate deployment config ",
+        "description": "Validate the deployment configuration, and checks if it's reachable, this is recommended before it's creation",
         "tags": [
           "Workspace V1"
         ],
@@ -538,7 +541,132 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/butlerConfigRequest"
+                "$ref": "#/components/schemas/deploymentConfigSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If deployment system is reachable"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/git": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "patch": {
+        "summary": "Set git configuration",
+        "description": "Save the git configuration for that workspace, if a configration already exists, it's value is updated",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/gitConfigSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "If the git configuration was updated successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a git configuration",
+        "description": "Deletes the git configuration from the specified workspace",
+        "tags": [
+          "Workspace V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "When the git configuration was deleted successfully"
+          },
+          "401": {
+            "description": "Token is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists, or there is no matcher to be deleted"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/configurations/git/validate": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/pathWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Validate git configuration",
+        "description": "Validate the git configuration and checks if it's reachable, this is recommended before it's creation",
+        "tags": [
+          "Workspace V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/gitConfigSchema"
               }
             }
           }
@@ -1731,13 +1859,32 @@
         "tags": [
           "Component V1"
         ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/pageSize"
+          },
+          {
+            "$ref": "#/components/parameters/pageNumber"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Components information",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/componentsResponse"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/pageResponse"
+                    }
+                  ],
+                  "properties": {
+                    "content": {
+                      "items": {
+                        "$ref": "#/components/schemas/componentResponse"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1775,7 +1922,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/componentRequest"
+                  "$ref": "#/components/schemas/componentSchema"
                 }
               }
             }
@@ -1787,7 +1934,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/componentsResponse"
+                  "$ref": "#/components/schemas/componentResponse"
                 }
               }
             }
@@ -1859,6 +2006,51 @@
           }
         }
       },
+      "get": {
+        "summary": "Get component",
+        "description": "Get component information",
+        "tags": [
+          "Component V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "Component complete information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/componentSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/componentResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "summary": "Update component",
         "description": "Updates the component",
@@ -1869,7 +2061,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/componentRequest"
+                "$ref": "#/components/schemas/componentSchema"
               }
             }
           }
@@ -1880,7 +2072,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/componentsResponse"
+                  "$ref": "#/components/schemas/componentResponse"
                 }
               }
             }
@@ -2756,35 +2948,46 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/workspaceResponse"
+          }
+        ],
+        "properties": {
+          "circleMatcherUrl": {
+            "type": "string",
+            "format": "url",
+            "example": "https://circle-matcher.charles.com"
           },
-          {
-            "$ref": "#/components/schemas/datasourceResponse"
+          "deployConfiguration": {
+            "type": "string",
+            "example": "Butler Sandbox"
           },
-          {
-            "$ref": "#/components/schemas/actionResponse"
+          "status": {
+            "type": "string",
+            "example": "COMPLETED",
+            "description": "Tells if the workspace has all it's requirements fulfilled"
           },
-          {
-            "$ref": "#/components/schemas/userGroupWorkspaceResponse"
+          "gitConfiguration": {
+            "type": "string",
+            "example": "ZupGithub"
           },
-          {
-            "properties": {
-              "circleMatcherUrl": {
-                "type": "string",
-                "format": "url",
-                "example": "https://circle-matcher.charles.com"
-              },
-              "butlerConfigurationName": {
-                "type": "string",
-                "example": "Butler Sandbox"
-              },
-              "status": {
-                "type": "string",
-                "example": "COMPLETED",
-                "description": "Tells if the workspace has all it's requirements fulfilled"
-              }
+          "datasources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/datasourceResponse"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/actionResponse"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/userGroupWorkspaceResponse"
             }
           }
-        ]
+        }
       },
       "workspaceResponse": {
         "description": "The workspace basic information",
@@ -2842,7 +3045,7 @@
           }
         }
       },
-      "circleMatcherRequest": {
+      "circleMatcherSchema": {
         "description": "The circle matcher request object used to create a new matcher configuration",
         "properties": {
           "url": {
@@ -2854,7 +3057,7 @@
           }
         }
       },
-      "butlerConfigRequest": {
+      "deploymentConfigSchema": {
         "description": "The butler request object used to create a new butler configuration",
         "properties": {
           "name": {
@@ -2875,6 +3078,31 @@
             "example": "sandbox",
             "required": true,
             "maximum": 253
+          }
+        }
+      },
+      "gitConfigSchema": {
+        "description": "The git config request object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Zup GitHub",
+            "required": true,
+            "maximum": 100
+          },
+          "url": {
+            "type": "string",
+            "format": "url",
+            "example": "https://api.github.com",
+            "maximum": 1048
+          },
+          "type": {
+            "type": "string",
+            "required": true,
+            "enum": [
+              "GITHUB",
+              "GITLAB"
+            ]
           },
           "gitToken": {
             "type": "string",
@@ -2947,20 +3175,6 @@
             "type": "string",
             "example": "Prometheus",
             "maximum": 64
-          },
-          "type": {
-            "description": "The plugin that will be used for the executions of this datasource",
-            "type": "string",
-            "example": "Prometheus",
-            "maximum": 64
-          },
-          "data": {
-            "description": "The specific configuration for that datasource works, like credentials and url, this filed is treated as an generic json object",
-            "type": "object",
-            "example": {
-              "url": "https://prometheus-server.com",
-              "key": "prom-api-key"
-            }
           }
         }
       },
@@ -3038,19 +3252,6 @@
             "type": "string",
             "example": "Circle Promotion to circle Abc",
             "maximum": 100
-          },
-          "type": {
-            "description": "The plugin that will be used for the executions of this datasource",
-            "type": "string",
-            "example": "circle-promotion",
-            "maximum": 30
-          },
-          "configuration": {
-            "description": "The specific configuration for that action to works, like credentials and url, this filed is treated as an generic json object",
-            "type": "object",
-            "example": {
-              "destinationCircle": "f28e0b9a-cf9b-4eec-9243-28c568a4dc6b"
-            }
           }
         }
       },
@@ -3361,14 +3562,11 @@
           }
         }
       },
-      "componentRequest": {
+      "componentSchema": {
         "description": "The component information",
         "properties": {
-          "helm": {
-            "description": "The git url where the helm template of components is",
-            "type": "string",
-            "required": true,
-            "example": "github.com/zupit/helm"
+          "helmConfig": {
+            "$ref": "#/components/schemas/helmConfigSchema"
           },
           "name": {
             "type": "string",
@@ -3377,24 +3575,56 @@
           }
         }
       },
-      "componentsResponse": {
+      "helmConfigSchema": {
+        "description": "The helm config schema object",
+        "properties": {
+          "organization": {
+            "type": "string",
+            "example": "zupit",
+            "required": true
+          },
+          "repository": {
+            "type": "string",
+            "example": "my-app-charts",
+            "required": true
+          },
+          "path": {
+            "type": "string",
+            "example": "content"
+          },
+          "reference": {
+            "type": "string",
+            "example": "some-ref",
+            "default": "main"
+          }
+        }
+      },
+      "componentFullResponse": {
         "description": "The component information",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/componentSchema"
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
+          }
+        }
+      },
+      "componentResponse": {
+        "description": "The component basic information",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid",
             "example": "3598e61a-870d-4e09-8d7a-08be5d21a6d8"
           },
-          "helm": {
-            "description": "The git url where the helm template of components is",
-            "type": "string",
-            "required": true,
-            "example": "github.com/zupit/helm"
-          },
           "name": {
             "type": "string",
-            "required": true,
-            "example": "front-end"
+            "example": "backend"
           }
         }
       },
