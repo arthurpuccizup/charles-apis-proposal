@@ -123,7 +123,7 @@
                   "actions": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/actionRequest"
+                      "$ref": "#/components/schemas/actionConfigRequest"
                     }
                   }
                 }
@@ -902,7 +902,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/actionRequest"
+                "$ref": "#/components/schemas/actionConfigRequest"
               }
             }
           }
@@ -913,7 +913,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/actionResponse"
+                  "$ref": "#/components/schemas/actionConfigResponse"
                 }
               }
             }
@@ -953,7 +953,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/actionResponse"
+                    "$ref": "#/components/schemas/actionConfigResponse"
                   }
                 }
               }
@@ -997,7 +997,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/actionValidationRequest"
+                "$ref": "#/components/schemas/actionConfigValidationRequest"
               }
             }
           }
@@ -1824,6 +1824,453 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/metrics": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        }
+      ],
+      "post": {
+        "summary": "Create new metric",
+        "description": "Creates a new metric specification",
+        "tags": [
+          "Metrics V1"
+        ],
+        "responses": {
+          "201": {
+            "description": "The metric that was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/metricSchema"
+                    }
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "200003fe-4622-42aa-848d-985f88b12f7d"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List metrics",
+        "description": "List all the metrics at workspace",
+        "tags": [
+          "Metrics V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The metrics at workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "200003fe-4622-42aa-848d-985f88b12f7d"
+                    },
+                    "nickname": {
+                      "type": "string",
+                      "example": "My request metric"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/metrics/{metricId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "name": "metricId",
+          "in": "path",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "put": {
+        "summary": "Update metric specification",
+        "description": "Updates a metric specification",
+        "tags": [
+          "Metrics V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "The metric was updated successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get metric specification",
+        "description": "Get the metric specification",
+        "tags": [
+          "Metrics V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The metrics at workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/metricSchema"
+                    }
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "200003fe-4622-42aa-848d-985f88b12f7d"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove metric from workspace",
+        "description": "Removes a metric specification from the workspace",
+        "tags": [
+          "Metrics V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "The metric was removed successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/metrics-groups": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        }
+      ],
+      "post": {
+        "summary": "Create metric group",
+        "description": "Creates a new metric group",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metricGroupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "When the metric group was created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/metricGroupFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List metrics groups",
+        "description": "List all metrics groups at circle",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The metrics groups",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/metricGroupResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/circles/{circleId}/metrics-groups/{metricGroupId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/headerWorkspaceId"
+        },
+        {
+          "$ref": "#/components/parameters/pathCircleId"
+        },
+        {
+          "$ref": "#/components/parameters/pathMetricGroupId"
+        }
+      ],
+      "put": {
+        "summary": "Update metric group",
+        "description": "Updates the metric group",
+        "tags": [
+          "Circle V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metricGroupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "When the metric group was updated successfully"
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get metric group",
+        "description": "Gets the metric group complete information",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "200": {
+            "description": "The metric group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/metricGroupFullResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token / workspace-id header is not sent or is invalid"
+          },
+          "403": {
+            "description": "Client doesn't have permissions to call the API"
+          },
+          "404": {
+            "description": "The workspace does not exists"
+          },
+          "5XX": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete metric group",
+        "description": "Deletes the metric group",
+        "tags": [
+          "Circle V1"
+        ],
+        "responses": {
+          "204": {
+            "description": "When the metric group was deleted successfully"
           },
           "401": {
             "description": "Token / workspace-id header is not sent or is invalid"
@@ -2971,7 +3418,7 @@
           "actions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/actionResponse"
+              "$ref": "#/components/schemas/actionConfigResponse"
             }
           },
           "groups": {
@@ -3171,7 +3618,7 @@
           }
         }
       },
-      "actionRequest": {
+      "actionConfigRequest": {
         "description": "The rollout action request object, used to create new configuration",
         "properties": {
           "name": {
@@ -3205,7 +3652,7 @@
           }
         }
       },
-      "actionValidationRequest": {
+      "actionConfigValidationRequest": {
         "description": "The rollout action validation request object, used to validate a configuration",
         "properties": {
           "type": {
@@ -3225,7 +3672,7 @@
           }
         }
       },
-      "actionResponse": {
+      "actionConfigResponse": {
         "description": "The action configuration basic information",
         "properties": {
           "id": {
@@ -3493,6 +3940,12 @@
           },
           "deployment": {
             "$ref": "#/components/schemas/deploymentResponse"
+          },
+          "metricsGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/metricGroupResponse"
+            }
           }
         }
       },
@@ -3790,6 +4243,285 @@
             "example": "Circle Abc"
           }
         }
+      },
+      "metricGroupRequest": {
+        "description": "Request object user for create a new metrics group",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "My health group",
+            "required": true
+          },
+          "rules": {
+            "$ref": "#/components/schemas/groupMetricsSchema"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/actionSchema"
+            }
+          }
+        }
+      },
+      "groupMetricsSchema": {
+        "description": "The object for group the metrics with conjunctions and disjunctions",
+        "properties": {
+          "all": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/metricRuleSchema"
+            }
+          },
+          "any": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/metricRuleSchema"
+            }
+          }
+        }
+      },
+      "metricRuleSchema": {
+        "properties": {
+          "metricId": {
+            "type": "string",
+            "example": "200003fe-4622-42aa-848d-985f88b12f7d"
+          },
+          "threshold": {
+            "$ref": "#/components/schemas/metricThresholdSchema"
+          }
+        }
+      },
+      "metricSchema": {
+        "description": "The metric object",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "example": "request metric"
+          },
+          "query": {
+            "type": "string",
+            "example": "my_metric{my_prom_label=\"some_value\"}",
+            "description": "If is wanted to use and custom metric instead of a simple metric"
+          },
+          "metric": {
+            "$ref": "#/components/schemas/simpleMetricQuerySchema"
+          }
+        }
+      },
+      "simpleMetricQuerySchema": {
+        "description": "If is wanted to create with a easier method, instead of a advanced query",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "my_metric"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/metricFilterSchema"
+            }
+          },
+          "groupBy": {
+            "$ref": "#/components/schemas/groupFilterSchema"
+          }
+        }
+      },
+      "metricFilterSchema": {
+        "description": "The metric filter",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "my_label"
+          },
+          "value": {
+            "type": "string",
+            "example": "some_value_to_filter"
+          },
+          "operator": {
+            "type": "string",
+            "example": "="
+          }
+        }
+      },
+      "groupFilterSchema": {
+        "description": "The metric group by schema",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "my_label"
+          }
+        }
+      },
+      "metricThresholdSchema": {
+        "description": "The metric threshold",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "example": 10
+          },
+          "condition": {
+            "type": "string",
+            "enum": [
+              "GREATER_THAN",
+              "LOWER_THAN",
+              "EQUAL",
+              "OTHER_THAN"
+            ]
+          }
+        }
+      },
+      "actionSchema": {
+        "description": "The metric group action schema",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "required": true,
+            "example": "My Action"
+          },
+          "actionConfigId": {
+            "type": "string",
+            "required": true,
+            "description": "The action configuration that will be used",
+            "example": "cccb6db1-6200-4588-8893-8ef92bf923a4"
+          },
+          "executionParameters": {
+            "type": "object",
+            "description": "The dynamic parameters required for the action plugin to execute"
+          },
+          "configuration": {
+            "type": "object",
+            "properties": {
+              "repeatable": {
+                "type": "boolean",
+                "example": false
+              },
+              "numberOfCycles": {
+                "type": "integer",
+                "example": 2
+              }
+            }
+          }
+        }
+      },
+      "metricGroupBasicSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "200003fe-4622-42aa-848d-985f88b12f7d"
+          },
+          "name": {
+            "type": "string",
+            "example": "My metric group"
+          }
+        }
+      },
+      "metricGroupResponse": {
+        "description": "The response object user for listing the metrics groups",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/metricGroupBasicSchema"
+          }
+        ],
+        "properties": {
+          "resume": {
+            "$ref": "#/components/schemas/metricGroupResume"
+          }
+        }
+      },
+      "metricGroupResume": {
+        "description": "The metric group resume object",
+        "properties": {
+          "thresholds": {
+            "type": "object",
+            "properties": {
+              "registered": {
+                "type": "integer",
+                "example": 10
+              },
+              "reached": {
+                "type": "integer",
+                "example": 8
+              }
+            }
+          },
+          "metricsQuantity": {
+            "type": "integer",
+            "example": 11
+          },
+          "actionQuantity": {
+            "type": "integer",
+            "example": 3
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "ERROR"
+            ]
+          }
+        }
+      },
+      "metricGroupFullResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/metricGroupBasicSchema"
+          }
+        ],
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/metricResume"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "200003fe-4622-42aa-848d-985f88b12f7d"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "My Action"
+                }
+              }
+            }
+          }
+        }
+      },
+      "metricResume": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "200003fe-4622-42aa-848d-985f88b12f7d"
+          },
+          "name": {
+            "type": "string",
+            "example": "My metric"
+          },
+          "threshold": {
+            "type": "integer",
+            "example": 10
+          },
+          "lastMeasure": {
+            "type": "integer",
+            "example": 8
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "WARNING",
+              "ERROR",
+              "OK",
+              "MEASURE_ERROR"
+            ]
+          }
+        }
       }
     },
     "parameters": {
@@ -3854,6 +4586,14 @@
       "pathMemberId": {
         "description": "The memberId",
         "name": "memberId",
+        "in": "path",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "pathMetricGroupId": {
+        "description": "The metric group id",
+        "name": "metricGroupId",
         "in": "path",
         "schema": {
           "type": "string"

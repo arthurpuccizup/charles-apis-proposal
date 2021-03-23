@@ -4,8 +4,8 @@
 
 - Open sea specific resources, removing it from circles listing and find by id
 
-- Use components individually, asking helm templates for each one, this way the "module" idea will be removed, this is
-  proposal in the "patch" resource of components, if it's used in that way delete component it's needed
+- Use components individually, asking helm templates for each one, this way the "module" idea will be removed, if it's
+  used in that way delete component it's needed
 
 - Don't control users, only use a username, and all the user control stays at the IDM, and when creating a user group,
   only requires a username, and remove the user entity management from our domain
@@ -53,6 +53,9 @@
 
 - Where to pass workspaceId? In a header? Path parameter composition?
 
+- Instead of creating the metric group, and after set the metrics to it, why not create the metrics first, and after
+  create a group with the metrics, and the action strategy?
+
 **Some notes**
 
 - The circle history is just a model, for what the histories can be, they're grouped in the /histories and not
@@ -65,3 +68,7 @@
 - Not adding the system token functionality yet, since it's not done
 
 - Not adding the webhooks functionality yet, since it may change
+
+- The object groupMetrics schema is just a simple example to use conjunctions and disjunction for metrics, it's
+  necessary to check if is needed something more than that, like allowing rules and sub rules groups, like in teh circle
+  segmentation
