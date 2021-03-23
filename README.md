@@ -25,10 +25,10 @@
 **Some business rules:**
 
 - It's not possible to see open sea in the listing, the getById resources returns 404 when passing it id, and the same
-  for any other API that receives a circle id;
+  for any other API that receives a circle id
 
 - All the exclusion, should be done in logical manner, and will have a history table with all the events for each
-  entity;
+  entity
 
 - When deleting a workspace, do it asynchronously
 
@@ -55,6 +55,11 @@
 
 - Instead of creating the metric group, and after set the metrics to it, why not create the metrics first, and after
   create a group with the metrics, and the action strategy?
+
+- Graphs for metrics are really needed? I'm afraid of competing with tools like grafana
+
+- Maybe we could facilitate the advanced querying, allowing some default tags that when performing the query we switch
+  it with some value based on the circle, like circle id
 
 **Some notes**
 
