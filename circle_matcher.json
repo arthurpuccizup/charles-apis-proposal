@@ -1,0 +1,259 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Charles",
+    "description": "Charles Circke Mactehr APIs remodeling proposal.",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Default Server URL"
+    }
+  ],
+  "paths": {
+    "/v1/identify": {
+      "post": {
+        "summary": "Identify",
+        "description": "Calls the identify API with the given key value",
+        "tags": [
+          "Identify V1"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/identifyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The circles which the user may be part of",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/identifyResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/segmentation": {
+      "put": {
+        "summary": "Create/Update segmentation",
+        "tags": ["Segmentation V1"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/segmentationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The segmentation was create successfully"
+          },
+          "204": {
+            "description": "The segmentation was update successfully"
+          }
+        }
+      }
+    },
+    "/v1/segmentation/import": {
+      "put": {
+        "summary": "Bulk create/update segmentation",
+        "tags": ["Segmentation V1"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/segmentationRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The segmentations were created or updated successfully"
+          }
+        }
+      }
+    },
+    "/v1/segmentation/{reference}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "reference",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Deletes a rule",
+        "tags": ["Segmentation V1"],
+        "responses": {
+          "204": {
+            "description": "The rule was deleted successfully"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "identifyRequest": {
+        "description": "The request object used for calling the identify, it's a simple key value map",
+        "type": "object",
+        "example": {
+          "username": "charles@zup.com.br",
+          "location": "BR"
+        }
+      },
+      "identifyResponse": {
+        "description": "The identify response object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "de8fa547-ae35-4566-8a9d-a4731165bbaf"
+          },
+          "name": {
+            "type": "string",
+            "example": "Circle Abc"
+          }
+        }
+      },
+      "segmentationRequest": {
+        "description": "The segmentation request object, used for create or update the segmentation rules",
+        "properties": {
+          "previousReference": {
+            "type": "string",
+            "description": "If is updating a rule, should inform the previous reference of that rule for overriding"
+          },
+          "reference": {
+            "type": "string",
+            "description": "The identification of the rule, used for create new rules"
+          },
+          "name": {
+            "type": "string",
+            "description": "The rule name"
+          },
+          "circleId": {
+            "type": "string",
+            "description": "The circle ID",
+            "example": "e1f4948e-ff79-403f-91ad-ec4265c43a15"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "SIMPLE_KV",
+              "REGULAR",
+              "PERCENTAGE"
+            ]
+          },
+          "workspaceId": {
+            "type": "string",
+            "example": "e1f4948e-ff79-403f-91ad-ec4265c43a15"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "example": false
+          },
+          "percentage": {
+            "type": "integer",
+            "description": "If the type is percentage, use this for defining the percentage amount"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/components/schemas/nodeSchema"
+          }
+        }
+      },
+      "nodeSchema": {
+        "description": "The segmentation rule schema",
+        "properties": {
+          "type": {
+            "description": "The rule type",
+            "type": "string",
+            "enum": [
+              "CLAUSE",
+              "RULE"
+            ]
+          },
+          "logicalOperator": {
+            "description": "The logical operador for the rule",
+            "type": "string",
+            "enum": [
+              "AND",
+              "OR"
+            ]
+          },
+          "clauses": {
+            "description": "The sub-rules, if the type of this is CLAUSE",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/nodeSchema"
+            }
+          },
+          "content": {
+            "description": "The rules, if the type of this is RULE",
+            "type": "object",
+            "properties": {
+              "key": {
+                "description": "The key to be used as rule matcher",
+                "type": "string",
+                "example": "username"
+              },
+              "condition": {
+                "description": "The conditional to be used for verify the values",
+                "type": "string",
+                "enum": [
+                  "EQUAL",
+                  "GREATER_THAN",
+                  "GREATER_THAN_OR_EQUAL",
+                  "LOWER_THAN",
+                  "LESS_THAN_OR_EQUAL",
+                  "STARTS_WITH",
+                  "NOT_EQUAL",
+                  "ENDS_WITH",
+                  "MATCHES",
+                  "CONTAINS"
+                ]
+              },
+              "value": {
+                "description": "The values to be used as truth",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "darwin@zupit.com.br"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

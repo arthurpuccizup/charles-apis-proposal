@@ -75,5 +75,5 @@
 - Not adding the webhooks functionality yet, since it may change
 
 - The object groupMetrics schema is just a simple example to use conjunctions and disjunction for metrics, it's
-  necessary to check if is needed something more than that, like allowing rules and sub rules groups, like in teh circle
+  necessary to check if is needed something more than that, like allowing rules and sub rules groups, like in the circle
   segmentation
